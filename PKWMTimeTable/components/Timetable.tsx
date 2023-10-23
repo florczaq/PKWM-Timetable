@@ -1,4 +1,6 @@
 /* eslint-disable prettier/prettier */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable no-sparse-arrays */
 /* eslint-disable prettier/prettier */
@@ -49,14 +51,46 @@ const data: string[] = [
   'Subject14 K444',
 ];
 
-const DayBar = () => {
+export enum Day {
+  Monday = 'Poniedziałek',
+  Tuesday = 'Wtorek',
+  Wednesday = 'Środa',
+  Thursday = 'Czwartek',
+  Friday = 'Piątek',
+}
+
+type DayBarProps = {
+  day: Day;
+  setDay: (newDay: Day) => void;
+};
+
+const DayBar = ({day, setDay}: DayBarProps) => {
+  const previousDay = () => {
+    let index = Object.values(Day).indexOf(day);
+    if (index - 1 < 0) {
+      index = Object.keys(Day).indexOf(Day.Friday) + 1;
+    }
+    setDay(Object.values(Day).at(index - 1) || Day.Monday);
+  };
+  const nextDay = () => {
+    let index = Object.values(Day).indexOf(day);
+    if (index + 1 > Object.keys(Day).length) {
+      index = Object.keys(Day).indexOf(Day.Monday);
+    }
+    setDay(Object.values(Day).at(index + 1) || Day.Monday);
+  };
+
   return (
     <View style={style.dayBar}>
-      <TouchableOpacity style={style.dayBar_button}>
+      <TouchableOpacity
+        style={style.dayBar_button}
+        onPress={() => previousDay()}>
         <Text style={[style.dayBar_text, {fontSize: 30}]}>{'<'}</Text>
       </TouchableOpacity>
-      <Text style={style.dayBar_text}>Poniedziałek (N)</Text>
-      <TouchableOpacity style={style.dayBar_button}>
+
+      <Text style={style.dayBar_text}>{day} (N)</Text>
+
+      <TouchableOpacity style={style.dayBar_button} onPress={() => nextDay()}>
         <Text style={[style.dayBar_text, , {fontSize: 30}]}>{'>'}</Text>
       </TouchableOpacity>
     </View>
@@ -86,10 +120,15 @@ const SubjectsList = () => {
   );
 };
 
-export const Timetable = () => {
+type TimetableProps = {
+  day: Day;
+  setDay: (newDay: Day) => void;
+};
+
+export const Timetable = ({day, setDay}: TimetableProps) => {
   return (
     <>
-      <DayBar />
+      <DayBar day={day} setDay={setDay} />
       <SubjectsList />
     </>
   );

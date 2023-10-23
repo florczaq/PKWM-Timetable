@@ -1,7 +1,8 @@
-import React from 'react';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import React, {useState} from 'react';
 import {SafeAreaView, StatusBar, StyleSheet, Text, View} from 'react-native';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
-import {Timetable} from './components/Timetable';
+import {Timetable, Day} from './components/Timetable';
 
 const PageTitleBar = () => {
   return (
@@ -12,9 +13,15 @@ const PageTitleBar = () => {
 };
 
 function App(): JSX.Element {
+  const [day, setDay] = useState<Day>(Day.Monday);
   const backgroundStyle = {
     backgroundColor: Colors.darker,
     flex: 1,
+  };
+
+  const changeDay = (newDay: Day) => {
+    setDay(newDay);
+    console.log(day);
   };
 
   return (
@@ -24,7 +31,7 @@ function App(): JSX.Element {
         backgroundColor={backgroundStyle.backgroundColor}
       />
       <PageTitleBar />
-      <Timetable />
+      <Timetable day={day} setDay={changeDay} />
     </SafeAreaView>
   );
 }
