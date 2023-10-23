@@ -51,6 +51,11 @@ const data: string[] = [
   'Subject14 K444',
 ];
 
+export enum WeekType {
+  Odd = 'N',
+  Even = 'P',
+}
+
 export enum Day {
   Monday = 'Poniedziałek',
   Tuesday = 'Wtorek',
@@ -61,23 +66,39 @@ export enum Day {
 
 type DayBarProps = {
   day: Day;
-  setDay: (newDay: Day) => void;
+  setDay: (newDay: Day, newWeek: WeekType) => void;
+  weekType: WeekType;
 };
 
-const DayBar = ({day, setDay}: DayBarProps) => {
+const DayBar = ({ day, setDay, weekType }: DayBarProps) => {
   const previousDay = () => {
+    let newWeekType: WeekType = weekType;
     let index = Object.values(Day).indexOf(day);
+
     if (index - 1 < 0) {
       index = Object.keys(Day).indexOf(Day.Friday) + 1;
+      newWeekType =
+        Object.values(WeekType).at(
+          (Object.values(WeekType).indexOf(weekType) + 1) % 2,
+        ) || WeekType.Even;
     }
-    setDay(Object.values(Day).at(index - 1) || Day.Monday);
+
+    setDay(Object.values(Day).at(index - 1) || Day.Monday, newWeekType);
   };
+
   const nextDay = () => {
+    let newWeekType: WeekType = weekType;
     let index = Object.values(Day).indexOf(day);
-    if (index + 1 > Object.keys(Day).length) {
+
+    if (index + 1 >= Object.keys(Day).length) {
       index = Object.keys(Day).indexOf(Day.Monday);
+      newWeekType =
+        Object.values(WeekType).at(
+          (Object.values(WeekType).indexOf(weekType) + 1) % 2,
+        ) || WeekType.Even;
     }
-    setDay(Object.values(Day).at(index + 1) || Day.Monday);
+
+    setDay(Object.values(Day).at(index + 1) || Day.Monday, newWeekType);
   };
 
   return (
@@ -85,13 +106,15 @@ const DayBar = ({day, setDay}: DayBarProps) => {
       <TouchableOpacity
         style={style.dayBar_button}
         onPress={() => previousDay()}>
-        <Text style={[style.dayBar_text, {fontSize: 30}]}>{'<'}</Text>
+        <Text style={[style.dayBar_text, { fontSize: 30 }]}>{'<'}</Text>
       </TouchableOpacity>
 
-      <Text style={style.dayBar_text}>{day} (N)</Text>
+      <Text style={style.dayBar_text}>
+        {day} ({weekType})
+      </Text>
 
       <TouchableOpacity style={style.dayBar_button} onPress={() => nextDay()}>
-        <Text style={[style.dayBar_text, , {fontSize: 30}]}>{'>'}</Text>
+        <Text style={[style.dayBar_text, , { fontSize: 30 }]}>{'>'}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -122,13 +145,14 @@ const SubjectsList = () => {
 
 type TimetableProps = {
   day: Day;
-  setDay: (newDay: Day) => void;
+  setDay: (newDay: Day, newWeek: WeekType) => void;
+  weekType: WeekType;
 };
 
-export const Timetable = ({day, setDay}: TimetableProps) => {
+export const Timetable = ({ day, setDay, weekType }: TimetableProps) => {
   return (
     <>
-      <DayBar day={day} setDay={setDay} />
+      <DayBar day={day} setDay={setDay} weekType={weekType} />
       <SubjectsList />
     </>
   );
@@ -143,6 +167,7 @@ const style = StyleSheet.create({
     height: 70,
     borderBottomWidth: 1,
     borderColor: '#000',
+    backgroundColor: '#111',
   },
   dayBar_text: {
     width: '60%',
@@ -159,6 +184,7 @@ const style = StyleSheet.create({
   text: {
     color: '#fff',
     textAlign: 'center',
+    fontSize: 16,
   },
   subject: {
     borderBottomWidth: 1,
@@ -169,9 +195,9 @@ const style = StyleSheet.create({
     flexDirection: 'row',
   },
   subject_hour: {
-    width: '25%',
+    width: '30%',
   },
   subject_name: {
-    width: '75%',
+    width: '70%',
   },
 });
