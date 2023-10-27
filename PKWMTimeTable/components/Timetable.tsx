@@ -1,5 +1,4 @@
 /* eslint-disable prettier/prettier */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable no-sparse-arrays */
@@ -13,24 +12,24 @@ import {
   View,
 } from 'react-native';
 
-const hours: string[] = [
-  '7:30 - 8:15',
-  '8:15 - 9:00',
-  '9:15 - 10:00',
-  '10:00 - 10:45',
-  '11:00 - 11:45',
-  '11:45 - 12:30',
-  '12:45 - 13:30',
-  '13:30 - 14:15',
-  '14:30 - 15:15',
-  '15:15 - 16:00',
-  '16:15 - 17:00',
-  '17:00 - 17:45',
-  '18:00 - 18:45',
-  '18:45 - 19:30',
-  '19:45 - 20:30',
-  '20:30 - 21:15',
-];
+// const hours: string[] = [
+//   '7:30 - 8:15',
+//   '8:15 - 9:00',
+//   '9:15 - 10:00',
+//   '10:00 - 10:45',
+//   '11:00 - 11:45',
+//   '11:45 - 12:30',
+//   '12:45 - 13:30',
+//   '13:30 - 14:15',
+//   '14:30 - 15:15',
+//   '15:15 - 16:00',
+//   '16:15 - 17:00',
+//   '17:00 - 17:45',
+//   '18:00 - 18:45',
+//   '18:45 - 19:30',
+//   '19:45 - 20:30',
+//   '20:30 - 21:15',
+// ];
 
 const data: string[] = [
   'Subject1 C01',
@@ -70,7 +69,7 @@ type DayBarProps = {
   weekType: WeekType;
 };
 
-const DayBar = ({ day, setDay, weekType }: DayBarProps) => {
+const DayBar = ({day, setDay, weekType}: DayBarProps) => {
   const previousDay = () => {
     let newWeekType: WeekType = weekType;
     let index = Object.values(Day).indexOf(day);
@@ -106,7 +105,7 @@ const DayBar = ({ day, setDay, weekType }: DayBarProps) => {
       <TouchableOpacity
         style={style.dayBar_button}
         onPress={() => previousDay()}>
-        <Text style={[style.dayBar_text, { fontSize: 30 }]}>{'<'}</Text>
+        <Text style={[style.dayBar_text, {fontSize: 30}]}>{'<'}</Text>
       </TouchableOpacity>
 
       <Text style={style.dayBar_text}>
@@ -114,13 +113,16 @@ const DayBar = ({ day, setDay, weekType }: DayBarProps) => {
       </Text>
 
       <TouchableOpacity style={style.dayBar_button} onPress={() => nextDay()}>
-        <Text style={[style.dayBar_text, , { fontSize: 30 }]}>{'>'}</Text>
+        <Text style={[style.dayBar_text, , {fontSize: 30}]}>{'>'}</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
-const SubjectsList = () => {
+type SubjectsList = {
+  hours: [];
+};
+const SubjectsList = ({hours}: SubjectsList) => {
   return (
     <ScrollView>
       <View>
@@ -147,13 +149,14 @@ type TimetableProps = {
   day: Day;
   setDay: (newDay: Day, newWeek: WeekType) => void;
   weekType: WeekType;
+  hours: [];
 };
 
-export const Timetable = ({ day, setDay, weekType }: TimetableProps) => {
+export const Timetable = ({day, setDay, weekType, hours}: TimetableProps) => {
   return (
     <>
       <DayBar day={day} setDay={setDay} weekType={weekType} />
-      <SubjectsList />
+      <SubjectsList hours={hours} />
     </>
   );
 };
