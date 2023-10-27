@@ -1,27 +1,7 @@
-/* eslint-disable curly */
-/* eslint-disable prettier/prettier */
-/* eslint-disable no-trailing-spaces */
 /* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable curly */
 import axios from 'axios';
 const cheerio = require('cheerio');
-
-const Days = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek'];
-
-enum Week {
-  Odd = 'N',
-  Even = 'P',
-}
-
-type SubjectObj = {
-  name: string;
-  classroom: string;
-};
-
-type Data = {
-  day: string;
-  weekType: Week;
-  subjects: SubjectObj[];
-};
 
 const alterHTML = (data = '') => {
   return data
@@ -33,26 +13,6 @@ const alterHTML = (data = '') => {
     .replaceAll('<span style="font-size:85%">', '')
     .replaceAll('<a', '<span')
     .replaceAll('</a>', '</span>');
-};
-
-const filterSubjectsByWeek = (week: Week, $: any) => {
-  let data: Data[] = [];
-  let dayNumb: number = 0;
-  let text: string = '';
-  let subjectObject: SubjectObj = {name: '', classroom: ''};
-  let avaibleClassrooms: string[] = [];
-  //Go through every cell in table
-
-  const a: [] = $('tr').toArray();
-  console.log();
-  console.log();
-  console.log();
-  console.log();
-  console.log();
-  console.warn(a);
-  // a.forEach(e => {
-  //   console.warn(e);
-  // });
 };
 
 //Zczytywanie godzi z planu lekcji
