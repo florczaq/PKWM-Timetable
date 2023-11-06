@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {SafeAreaView, StatusBar, StyleSheet, Text, View} from 'react-native';
 import {Timetable, Day, WeekType} from './components/Timetable';
 import {getData} from './script';
+
 const PageTitleBar = () => {
   return (
     <View style={styles.pageTitleBar}>
@@ -45,11 +46,12 @@ function App(): JSX.Element {
         setDay={changeDay}
         weekType={week}
         hours={data.hours || []}
+        subjects={data.data}
       />
     </SafeAreaView>
   );
 }
-
+// https://react-native-async-storage.github.io/async-storage/docs/usage
 const styles = StyleSheet.create({
   pageTitleBar: {
     width: '100%',

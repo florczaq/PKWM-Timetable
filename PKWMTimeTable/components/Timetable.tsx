@@ -12,44 +12,6 @@ import {
   View,
 } from 'react-native';
 
-// const hours: string[] = [
-//   '7:30 - 8:15',
-//   '8:15 - 9:00',
-//   '9:15 - 10:00',
-//   '10:00 - 10:45',
-//   '11:00 - 11:45',
-//   '11:45 - 12:30',
-//   '12:45 - 13:30',
-//   '13:30 - 14:15',
-//   '14:30 - 15:15',
-//   '15:15 - 16:00',
-//   '16:15 - 17:00',
-//   '17:00 - 17:45',
-//   '18:00 - 18:45',
-//   '18:45 - 19:30',
-//   '19:45 - 20:30',
-//   '20:30 - 21:15',
-// ];
-
-const data: string[] = [
-  'Subject1 C01',
-  'Subject2 C02',
-  'Subject3 K333',
-  '',
-  '',
-  'Subject4 K444',
-  'Subject5 K444',
-  'Subject6 K444',
-  'Subject7 K444',
-  'Subject8 K444',
-  'Subject9 K444',
-  'Subject10 K444',
-  'Subject11 K444',
-  'Subject12 K444',
-  'Subject13 K444',
-  'Subject14 K444',
-];
-
 export enum WeekType {
   Odd = 'N',
   Even = 'P',
@@ -121,21 +83,27 @@ const DayBar = ({day, setDay, weekType}: DayBarProps) => {
 
 type SubjectsList = {
   hours: [];
+  data: [] | undefined;
 };
-const SubjectsList = ({hours}: SubjectsList) => {
+const SubjectsList = ({hours, data}: SubjectsList) => {
   return (
     <ScrollView>
       <View>
-        {data.map((element, i) => {
+        {data?.map((element, index) => {
           return (
-            <View style={style.subject} key={i}>
+            <View style={style.subject} key={index}>
               <View style={style.subject_hour}>
-                <Text style={style.text}>{hours[i]}</Text>
+                <Text style={style.text}>{hours[index]}</Text>
               </View>
+
               <View style={style.subject_name}>
-                <Text key={i} style={style.text}>
-                  {element}
-                </Text>
+                {element?.map((e, i) => {
+                  return (
+                    <Text key={i} style={style.text}>
+                      {e?.name} {e?.classroom}
+                    </Text>
+                  );
+                })}
               </View>
             </View>
           );
@@ -150,13 +118,46 @@ type TimetableProps = {
   setDay: (newDay: Day, newWeek: WeekType) => void;
   weekType: WeekType;
   hours: [];
+  subjects: [];
 };
 
-export const Timetable = ({day, setDay, weekType, hours}: TimetableProps) => {
+export const Timetable = ({
+  day,
+  setDay,
+  weekType,
+  hours,
+  subjects,
+}: TimetableProps) => {
+  const data: [][] | undefined = subjects
+    .map(element => element[Object.values(Day).indexOf(day)])
+    .map(element => {
+      const temp: [] = [];
+      if (weekType === WeekType.Odd) {
+        for (let i = 0; i < element?.length || 0; i++) {
+          if (
+            element[i].name.indexOf('(P)') === -1 &&
+            element[i].name.indexOf('-(p') === -1
+          ) {
+            temp.push(element[i]);
+          }
+        }
+      } else {
+        for (let i = 0; i < element?.length || 0; i++) {
+          if (
+            element[i].name.indexOf('(N)') === -1 &&
+            element[i].name.indexOf('-(n') === -1
+          ) {
+            temp.push(element[i]);
+          }
+        }
+      }
+      return temp;
+    });
+
   return (
     <>
       <DayBar day={day} setDay={setDay} weekType={weekType} />
-      <SubjectsList hours={hours} />
+      <SubjectsList hours={hours} data={data} />
     </>
   );
 };

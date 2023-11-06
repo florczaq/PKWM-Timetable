@@ -26,8 +26,12 @@ const getHours = ($: any): string[] => {
     });
   return hours;
 };
-
-export const getData = setDataState => {
+/**
+ *
+ * @param setDataState
+ * @returns data, hours
+ */
+export const getData = (setDataState: any) => {
   axios
     .get('http://podzial.mech.pk.edu.pl/stacjonarne/html/plany/o7.html')
     .then((response: {data: string}) => {
