@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {SafeAreaView, StatusBar, StyleSheet, Text, View} from 'react-native';
-import {Timetable, Day, WeekType} from './components/Timetable';
+import {Day, Timetable, WeekType} from './components/Timetable';
 import {getData} from './script';
 
 const PageTitleBar = () => {

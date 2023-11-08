@@ -83,7 +83,7 @@ const DayBar = ({day, setDay, weekType}: DayBarProps) => {
 
 type SubjectsList = {
   hours: [];
-  data: [] | undefined;
+  data: [] | [][] | undefined;
 };
 const SubjectsList = ({hours, data}: SubjectsList) => {
   return (
@@ -97,7 +97,7 @@ const SubjectsList = ({hours, data}: SubjectsList) => {
               </View>
 
               <View style={style.subject_name}>
-                {element?.map((e, i) => {
+                {element?.map((e: any, i) => {
                   return (
                     <Text key={i} style={style.text}>
                       {e?.name} {e?.classroom}
@@ -129,8 +129,8 @@ export const Timetable = ({
   subjects,
 }: TimetableProps) => {
   const data: [][] | undefined = subjects
-    .map(element => element[Object.values(Day).indexOf(day)])
-    .map(element => {
+    .map((element: any) => element[Object.values(Day).indexOf(day)])
+    .map((element: any) => {
       const temp: [] = [];
       if (weekType === WeekType.Odd) {
         for (let i = 0; i < element?.length || 0; i++) {
