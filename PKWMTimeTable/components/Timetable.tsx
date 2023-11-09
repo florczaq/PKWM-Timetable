@@ -5,6 +5,7 @@
 /* eslint-disable prettier/prettier */
 import React from 'react';
 import {
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -84,10 +85,23 @@ const DayBar = ({day, setDay, weekType}: DayBarProps) => {
 type SubjectsList = {
   hours: [];
   data: [] | [][] | undefined;
+  loadData: () => void;
 };
-const SubjectsList = ({hours, data}: SubjectsList) => {
+const SubjectsList = ({hours, data, loadData}: SubjectsList) => {
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    loadData();
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1500);
+  }, [loadData]);
   return (
-    <ScrollView>
+    <ScrollView
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }>
       <View>
         {data?.map((element, index) => {
           return (
@@ -99,9 +113,11 @@ const SubjectsList = ({hours, data}: SubjectsList) => {
               <View style={style.subject_name}>
                 {element?.map((e: any, i) => {
                   return (
-                    <Text key={i} style={style.text}>
-                      {e?.name} {e?.classroom}
-                    </Text>
+                    e.name && (
+                      <Text key={i} style={style.text}>
+                        {e?.name} {e?.classroom}
+                      </Text>
+                    )
                   );
                 })}
               </View>
@@ -119,6 +135,7 @@ type TimetableProps = {
   weekType: WeekType;
   hours: [];
   subjects: [];
+  loadData: () => void;
 };
 
 export const Timetable = ({
@@ -127,8 +144,9 @@ export const Timetable = ({
   weekType,
   hours,
   subjects,
+  loadData,
 }: TimetableProps) => {
-  const data: [][] | undefined = subjects
+  const data: [][] | [{}][] | undefined = subjects
     .map((element: any) => element[Object.values(Day).indexOf(day)])
     .map((element: any) => {
       const temp: [] = [];
@@ -157,7 +175,7 @@ export const Timetable = ({
   return (
     <>
       <DayBar day={day} setDay={setDay} weekType={weekType} />
-      <SubjectsList hours={hours} data={data} />
+      <SubjectsList hours={hours} data={data} loadData={loadData} />
     </>
   );
 };

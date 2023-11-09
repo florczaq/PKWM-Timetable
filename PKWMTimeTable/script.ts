@@ -2,7 +2,6 @@
 /* eslint-disable curly */
 import axios from 'axios';
 const cheerio = require('cheerio');
-import {Alert} from 'react-native';
 const alterHTML = (data = '') => {
   return data
     .replaceAll('<br>', ' ')
@@ -70,5 +69,5 @@ export const getData = (setDataState: any) => {
         });
       setDataState({data: data, hours: hours});
     })
-    .catch(err => Alert.alert(err));
+    .catch(err => console.error(err));
 };

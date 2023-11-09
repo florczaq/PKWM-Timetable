@@ -25,9 +25,13 @@ function App(): JSX.Element {
     flex: 1,
   };
 
-  useEffect(() => {
+  const loadData = () => {
     getData(setData);
-  }, [setData]);
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
 
   const changeDay = (newDay: Day, newWeek: WeekType) => {
     setDay(newDay);
@@ -47,6 +51,7 @@ function App(): JSX.Element {
         weekType={week}
         hours={data.hours || []}
         subjects={data.data}
+        loadData={loadData}
       />
     </SafeAreaView>
   );
