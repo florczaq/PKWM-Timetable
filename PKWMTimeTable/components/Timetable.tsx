@@ -84,7 +84,7 @@ const DayBar = ({day, setDay, weekType}: DayBarProps) => {
 
 type SubjectsList = {
   hours: [];
-  data: [] | [][] | undefined;
+  data: [] | [][] | undefined | [{}][];
   loadData: () => void;
 };
 const SubjectsList = ({hours, data, loadData}: SubjectsList) => {
@@ -149,7 +149,7 @@ export const Timetable = ({
   const data: [][] | [{}][] | undefined = subjects
     .map((element: any) => element[Object.values(Day).indexOf(day)])
     .map((element: any) => {
-      const temp: [] = [];
+      const temp: [] | any = [];
       if (weekType === WeekType.Odd) {
         for (let i = 0; i < element?.length || 0; i++) {
           if (

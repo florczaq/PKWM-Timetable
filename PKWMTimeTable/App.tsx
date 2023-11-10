@@ -1,22 +1,22 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useState} from 'react';
-import {SafeAreaView, StatusBar, StyleSheet, Text, View} from 'react-native';
+import {
+  Image,
+  SafeAreaView,
+  StatusBar,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import {Navigation} from 'react-native-navigation';
+import Settings from './components/Settings';
 import {Day, Timetable, WeekType} from './components/Timetable';
 import {getData} from './script';
-
-const PageTitleBar = () => {
-  return (
-    <View style={styles.pageTitleBar}>
-      <Text style={styles.pageTitleBar_text}>Plan lekcji</Text>
-    </View>
-  );
-};
-
 type Data = {
   data: [];
   hours: [];
 };
 
-function App(): JSX.Element {
+const Home = () => {
   const [day, setDay] = useState<Day>(Day.Monday);
   const [week, setWeek] = useState<WeekType>(WeekType.Odd);
   const [data, setData] = useState<Data>({data: [], hours: []});
@@ -44,7 +44,6 @@ function App(): JSX.Element {
         barStyle={'light-content'}
         backgroundColor={backgroundStyle.backgroundColor}
       />
-      <PageTitleBar />
       <Timetable
         day={day}
         setDay={changeDay}
@@ -55,22 +54,92 @@ function App(): JSX.Element {
       />
     </SafeAreaView>
   );
-}
-// https://react-native-async-storage.github.io/async-storage/docs/usage
-const styles = StyleSheet.create({
-  pageTitleBar: {
-    width: '100%',
-    height: '10%',
-    borderBottomWidth: 1,
-    borderColor: '#000',
-    backgroundColor: '#000',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  pageTitleBar_text: {
-    fontSize: 30,
-    color: '#fff',
-  },
-});
+};
 
-export default App;
+const SettingsIcon = (props: any) => {
+  return (
+    <View
+      style={{
+        width: 50,
+        borderWidth: 1,
+        borderColor: 'transparent',
+      }}>
+      <View style={{width: 50, justifyContent: 'center', alignItems: 'center'}}>
+        <TouchableOpacity
+          onPress={() =>
+            Navigation.push('settingsIcon', {
+              component: {
+                name: 'Settings',
+              },
+            }).catch(e => console.log(e))
+          }>
+          <Image
+            style={{width: 25, resizeMode: 'contain'}}
+            source={require('./assets/icons/settings.png')}
+          />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
+
+Home.options = {
+  topBar: {
+    rightButtons: [
+      {
+        id: 'id',
+        text: 'Button',
+        component: {
+          name: 'settingsIcon',
+        },
+      },
+    ],
+    title: {
+      text: 'Plan Lekcji',
+      color: '#fff',
+      alignment: 'center',
+      fontSize: 25,
+    },
+    background: {
+      color: '#000',
+    },
+    height: 60,
+  },
+};
+
+const start = () => {
+  Navigation.registerComponent('Home', () => Home);
+  Navigation.registerComponent('Settings', () => Settings);
+  Navigation.registerComponent('settingsIcon', () => SettingsIcon);
+  Navigation.events().registerAppLaunchedListener(() => {
+    Navigation.setRoot({
+      root: {
+        stack: {
+          children: [
+            {
+              component: {
+                id: 'Settings',
+                name: 'Settings',
+              },
+            },
+            {
+              component: {
+                id: 'settingsIcon',
+                name: 'settingsIcon',
+              },
+            },
+            {
+              component: {
+                id: 'Home',
+                name: 'Home',
+              },
+            },
+          ],
+        },
+      },
+    });
+  });
+};
+
+export default start;
+// https://react-native-async-storage.github.io/async-storage/docs/usage
