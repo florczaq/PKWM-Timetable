@@ -56,7 +56,7 @@ const Home = () => {
   );
 };
 
-const SettingsIcon = (props: any) => {
+const SettingsIcon = () => {
   return (
     <View
       style={{
@@ -107,6 +107,24 @@ Home.options = {
   },
 };
 
+Settings.options = {
+  topBar: {
+    title: {
+      text: 'Ustawienia',
+      color: '#fff',
+      alignment: 'center',
+      fontSize: 25,
+    },
+    background: {
+      color: '#000',
+    },
+    height: 60,
+    backButton: {
+      color: '#fff',
+    },
+  },
+};
+
 const start = () => {
   Navigation.registerComponent('Home', () => Home);
   Navigation.registerComponent('Settings', () => Settings);
@@ -118,14 +136,14 @@ const start = () => {
           children: [
             {
               component: {
-                id: 'Settings',
-                name: 'Settings',
+                id: 'settingsIcon',
+                name: 'settingsIcon',
               },
             },
             {
               component: {
-                id: 'settingsIcon',
-                name: 'settingsIcon',
+                id: 'Settings',
+                name: 'Settings',
               },
             },
             {
