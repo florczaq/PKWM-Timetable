@@ -3,7 +3,7 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable no-sparse-arrays */
 /* eslint-disable prettier/prettier */
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   RefreshControl,
   ScrollView,
@@ -12,6 +12,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+
+import * as Storage from '../storage';
 
 export enum WeekType {
   Odd = 'N',
@@ -146,6 +148,12 @@ export const Timetable = ({
   subjects,
   loadData,
 }: TimetableProps) => {
+  const [storageData, setStorageData] = useState<Storage.StoreDataType>();
+
+  useEffect(() => {
+    Storage.getData().then(res => setStorageData(res));
+  });
+
   const data: [][] | [{}][] | undefined = subjects
     .map((element: any) => element[Object.values(Day).indexOf(day)])
     .map((element: any) => {
