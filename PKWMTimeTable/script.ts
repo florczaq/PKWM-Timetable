@@ -25,14 +25,33 @@ const getHours = ($: any): string[] => {
     });
   return hours;
 };
+
+const oddzialList = [
+  {
+    name: '11K1',
+    link: 'http://podzial.mech.pk.edu.pl/stacjonarne/html/plany/o7.html',
+  },
+  {
+    name: '11K2',
+    link: 'http://podzial.mech.pk.edu.pl/stacjonarne/html/plany/o8.html',
+  },
+  {
+    name: '11K3',
+    link: 'http://podzial.mech.pk.edu.pl/stacjonarne/html/plany/o9.html',
+  },
+];
+
 /**
- *
  * @param setDataState
  * @returns data, hours
  */
-export const getData = (setDataState: any) => {
+export const getData = (setDataState: any, oddzial: string) => {
+  const src = oddzialList.filter(x => {
+    return x.name === oddzial;
+  });
+  console.log(src, oddzial);
   axios
-    .get('http://podzial.mech.pk.edu.pl/stacjonarne/html/plany/o7.html')
+    .get(src[0].link)
     .then((response: {data: string}) => {
       const $ = cheerio.load(alterHTML(response.data));
       const hours = getHours($);

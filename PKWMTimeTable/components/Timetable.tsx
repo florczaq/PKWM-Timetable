@@ -1,9 +1,10 @@
+/* eslint-disable curly */
 /* eslint-disable prettier/prettier */
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable no-sparse-arrays */
 /* eslint-disable prettier/prettier */
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {
   RefreshControl,
   ScrollView,
@@ -12,9 +13,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-
-import * as Storage from '../storage';
-
+import {StoreDataType} from '../storage';
+import {filterOptionList} from './Settings';
 export enum WeekType {
   Odd = 'N',
   Even = 'P',
@@ -131,13 +131,14 @@ const SubjectsList = ({hours, data, loadData}: SubjectsList) => {
   );
 };
 
-type TimetableProps = {
+type TimetableType = {
   day: Day;
   setDay: (newDay: Day, newWeek: WeekType) => void;
   weekType: WeekType;
   hours: [];
   subjects: [];
   loadData: () => void;
+  filterOptions: StoreDataType;
 };
 
 export const Timetable = ({
@@ -147,12 +148,20 @@ export const Timetable = ({
   hours,
   subjects,
   loadData,
-}: TimetableProps) => {
-  const [storageData, setStorageData] = useState<Storage.StoreDataType>();
-
-  useEffect(() => {
-    Storage.getData().then(res => setStorageData(res));
-  });
+  filterOptions,
+}: TimetableType) => {
+  const checkFilters = (name: string): boolean => {
+    let correct: boolean = true;
+    filterOptionList.grupa_K_list.forEach(e => {
+      if (e !== filterOptions.data.grupa_K && name.indexOf(e) !== -1)
+        correct = false;
+    });
+    filterOptionList.grupa_L_list.forEach(e => {
+      if (e !== filterOptions.data.grupa_L && name.indexOf(e) !== -1)
+        correct = false;
+    });
+    return correct;
+  };
 
   const data: [][] | [{}][] | undefined = subjects
     .map((element: any) => element[Object.values(Day).indexOf(day)])
@@ -162,7 +171,8 @@ export const Timetable = ({
         for (let i = 0; i < element?.length || 0; i++) {
           if (
             element[i].name.indexOf('(P)') === -1 &&
-            element[i].name.indexOf('-(p') === -1
+            element[i].name.indexOf('-(p') === -1 &&
+            checkFilters(element[i].name)
           ) {
             temp.push(element[i]);
           }
@@ -171,7 +181,8 @@ export const Timetable = ({
         for (let i = 0; i < element?.length || 0; i++) {
           if (
             element[i].name.indexOf('(N)') === -1 &&
-            element[i].name.indexOf('-(n') === -1
+            element[i].name.indexOf('-(n') === -1 &&
+            checkFilters(element[i].name)
           ) {
             temp.push(element[i]);
           }

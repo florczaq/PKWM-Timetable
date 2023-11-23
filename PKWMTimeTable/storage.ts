@@ -2,9 +2,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export type StoreDataType = {
-  oddzial: string;
-  grupa_K: string;
-  grupa_L: string;
+  data: {oddzial: string; grupa_K: string; grupa_L: string};
 };
 
 export const storeData = async (value: StoreDataType) => {

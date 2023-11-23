@@ -1,14 +1,16 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
-import React, {useEffect, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import React, {useState} from 'react';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Dropdown} from 'react-native-element-dropdown';
-import * as Storage from '../storage';
+import {StoreDataType} from '../storage';
 
-const oddzial_list = ['11K1', '11K2', '11K3'];
-const grupa_L_list = ['L01', 'L02', 'L03', 'L04', 'L05', 'L06'];
-const grupa_K_list = ['K01', 'K02', 'K03', 'K04', 'K05'];
+export const filterOptionList = {
+  oddzial_list: ['11K1', '11K2', '11K3'],
+  grupa_L_list: ['L01', 'L02', 'L03', 'L04', 'L05', 'L06'],
+  grupa_K_list: ['K01', 'K02', 'K03', 'K04', 'K05'],
+};
 
 type SelectList = {
   data: string[];
@@ -20,7 +22,6 @@ const SelectList = ({data, setValue, value, label}: SelectList) => {
   return (
     <View style={styles.optionSelectList}>
       <Dropdown
-        // mode="modal"
         data={data.map(e => {
           return {label: e, value: e};
         })}
@@ -30,95 +31,104 @@ const SelectList = ({data, setValue, value, label}: SelectList) => {
           setValue(label, v.value);
         }}
         containerStyle={{backgroundColor: '#333'}}
-        itemTextStyle={{textAlign: 'center'}}
+        itemTextStyle={{textAlign: 'center', color: '#fff'}}
         activeColor="transparent"
         value={value}
-        selectedTextStyle={{textAlign: 'center'}}
+        selectedTextStyle={{textAlign: 'center', color: '#fff'}}
         maxHeight={200}
+        dropdownPosition="bottom"
+        autoScroll={false}
       />
     </View>
   );
 };
 
-const Settings = () => {
-  const [oddzial, setOddzial] = useState(oddzial_list[0]);
-  const [grupa_K, setGrupa_K] = useState(grupa_K_list[0]);
-  const [grupa_L, setGrupa_L] = useState(grupa_L_list[0]);
+type Settings = {
+  closeModal: (newFilterData: StoreDataType) => void;
+  filterData: StoreDataType;
+};
+
+const Settings = ({closeModal, filterData}: Settings) => {
+  const [activeOptions, setActiveOptions] = useState<StoreDataType>(filterData);
 
   const onDataChange = (label: string, newValue: string) => {
     switch (label) {
       case 'oddzial':
-        setOddzial(newValue);
-        Storage.storeData({
-          oddzial: newValue,
-          grupa_L: grupa_L,
-          grupa_K: grupa_K,
+        setActiveOptions({
+          data: {
+            oddzial: newValue,
+            grupa_K: activeOptions.data.grupa_K,
+            grupa_L: activeOptions.data.grupa_L,
+          },
         });
         break;
       case 'grupa_K':
-        setGrupa_K(newValue);
-        Storage.storeData({
-          oddzial: oddzial,
-          grupa_L: grupa_L,
-          grupa_K: newValue,
+        setActiveOptions({
+          data: {
+            oddzial: activeOptions.data.oddzial,
+            grupa_K: newValue,
+            grupa_L: activeOptions.data.grupa_L,
+          },
         });
         break;
       case 'grupa_L':
-        setGrupa_L(newValue);
-        Storage.storeData({
-          oddzial: oddzial,
-          grupa_L: newValue,
-          grupa_K: grupa_K,
+        setActiveOptions({
+          data: {
+            oddzial: activeOptions.data.oddzial,
+            grupa_K: activeOptions.data.grupa_K,
+            grupa_L: newValue,
+          },
         });
         break;
-      default:
     }
   };
-
-  useEffect(() => {
-    Storage.getData()
-      .then(d => {
-        setOddzial(d.oddzial);
-        setGrupa_L(d.grupa_L);
-        setGrupa_K(d.grupa_K);
-      })
-      .catch(err => console.error(err));
-  });
 
   return (
     <View style={styles.container}>
       <View style={styles.option}>
         <SelectList
-          data={oddzial_list}
-          value={oddzial}
+          data={filterOptionList.oddzial_list}
+          value={activeOptions.data.oddzial}
           label={'oddzial'}
           setValue={onDataChange}
         />
       </View>
       <View style={styles.option}>
         <SelectList
-          data={grupa_L_list}
+          data={filterOptionList.grupa_L_list}
           setValue={onDataChange}
-          value={grupa_L}
+          value={activeOptions.data.grupa_L}
           label={'grupa_L'}
         />
       </View>
       <View style={styles.option}>
         <SelectList
-          data={grupa_K_list}
+          data={filterOptionList.grupa_K_list}
           setValue={onDataChange}
-          value={grupa_K}
+          value={activeOptions.data.grupa_K}
           label={'grupa_K'}
         />
       </View>
+      <TouchableOpacity
+        style={styles.bottomBar}
+        onPress={() => closeModal(activeOptions)}>
+        <View style={styles.modal_close}>
+          <Text style={styles.modal_close_text}>Close</Text>
+        </View>
+      </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    width: '90%',
+    height: '50%',
+    borderWidth: 1,
+    borderRadius: 20,
     backgroundColor: '#222',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   option: {
     width: '100%',
@@ -133,6 +143,28 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 5,
     borderRadius: 10,
+  },
+  modal_close: {
+    width: '40%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 10,
+    backgroundColor: '#333',
+  },
+  modal_close_text: {
+    fontSize: 20,
+    fontWeight: '400',
+    color: '#fff',
+  },
+  bottomBar: {
+    width: '100%',
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    paddingHorizontal: 10,
   },
 });
 

@@ -1,16 +1,13 @@
-/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable curly */
 import React, {useEffect, useState} from 'react';
-import {
-  Image,
-  SafeAreaView,
-  StatusBar,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {Modal, SafeAreaView, StatusBar, StyleSheet, View} from 'react-native';
 import {Navigation} from 'react-native-navigation';
-import Settings from './components/Settings';
+import Settings, {filterOptionList} from './components/Settings';
 import {Day, Timetable, WeekType} from './components/Timetable';
+import TopBar from './components/TopBar';
 import {getData} from './script';
+import {StoreDataType, getData as getStorageData, storeData} from './storage';
+
 type Data = {
   data: [];
   hours: [];
@@ -19,19 +16,39 @@ type Data = {
 const Home = () => {
   const [day, setDay] = useState<Day>(Day.Monday);
   const [week, setWeek] = useState<WeekType>(WeekType.Odd);
-  const [data, setData] = useState<Data>({data: [], hours: []});
+  const [tt_data, setData] = useState<Data>({data: [], hours: []});
+  const [filterData, setFilterData] = useState<StoreDataType>({
+    data: {
+      oddzial: filterOptionList.oddzial_list[0],
+      grupa_K: filterOptionList.grupa_K_list[0],
+      grupa_L: filterOptionList.grupa_L_list[0],
+    },
+  });
+  const [modaVisible, setModalVisible] = useState<boolean>(false);
   const backgroundStyle = {
     backgroundColor: '#222',
     flex: 1,
   };
 
   const loadData = () => {
-    getData(setData);
+    getData(setData, filterData.data.oddzial);
   };
 
   useEffect(() => {
-    loadData();
-  }, []);
+    getData(setData, filterData.data.oddzial);
+    getStorageData()
+      .then(res => {
+        console.log(res);
+        if (res != null) setFilterData(res);
+      })
+      .catch(e => console.error(e));
+  }, [filterData.data.oddzial]);
+
+  const closeModal = (newFilterData: StoreDataType) => {
+    setModalVisible(false);
+    setFilterData(newFilterData);
+    storeData(newFilterData);
+  };
 
   const changeDay = (newDay: Day, newWeek: WeekType) => {
     setDay(newDay);
@@ -44,108 +61,55 @@ const Home = () => {
         barStyle={'light-content'}
         backgroundColor={backgroundStyle.backgroundColor}
       />
+      <TopBar
+        title="Plan Lekcji"
+        storageData={filterData}
+        openModal={() => setModalVisible(true)}
+      />
+      <Modal
+        animationType="fade"
+        visible={modaVisible}
+        transparent
+        onRequestClose={() => console.log('close')}>
+        <View style={styles.modal}>
+          <Settings closeModal={closeModal} filterData={filterData} />
+        </View>
+      </Modal>
       <Timetable
         day={day}
         setDay={changeDay}
         weekType={week}
-        hours={data.hours || []}
-        subjects={data.data}
+        hours={tt_data.hours || []}
+        subjects={tt_data.data}
         loadData={loadData}
+        filterOptions={filterData}
       />
     </SafeAreaView>
   );
 };
 
-const SettingsIcon = () => {
-  return (
-    <View
-      style={{
-        width: 50,
-        borderWidth: 1,
-        borderColor: 'transparent',
-      }}>
-      <View style={{width: 50, justifyContent: 'center', alignItems: 'center'}}>
-        <TouchableOpacity
-          onPress={() =>
-            Navigation.push('settingsIcon', {
-              component: {
-                name: 'Settings',
-              },
-            }).catch(e => console.log(e))
-          }>
-          <Image
-            style={{width: 25, resizeMode: 'contain'}}
-            source={require('./assets/icons/settings.png')}
-          />
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-};
-
 Home.options = {
   topBar: {
-    rightButtons: [
-      {
-        id: 'id',
-        text: 'Button',
-        component: {
-          name: 'settingsIcon',
-        },
-      },
-    ],
-    title: {
-      text: 'Plan Lekcji',
-      color: '#fff',
-      alignment: 'center',
-      fontSize: 25,
-    },
-    background: {
-      color: '#000',
-    },
-    height: 60,
+    visible: false,
   },
 };
 
-Settings.options = {
-  topBar: {
-    title: {
-      text: 'Ustawienia',
-      color: '#fff',
-      alignment: 'center',
-      fontSize: 25,
-    },
-    background: {
-      color: '#000',
-    },
-    height: 60,
-    backButton: {
-      color: '#fff',
-    },
+const styles = StyleSheet.create({
+  modal: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(30,30,30,0.5)',
   },
-};
+});
 
 const start = () => {
   Navigation.registerComponent('Home', () => Home);
-  Navigation.registerComponent('Settings', () => Settings);
-  Navigation.registerComponent('settingsIcon', () => SettingsIcon);
   Navigation.events().registerAppLaunchedListener(() => {
     Navigation.setRoot({
       root: {
         stack: {
           children: [
-            {
-              component: {
-                id: 'settingsIcon',
-                name: 'settingsIcon',
-              },
-            },
-            {
-              component: {
-                id: 'Settings',
-                name: 'Settings',
-              },
-            },
             {
               component: {
                 id: 'Home',
