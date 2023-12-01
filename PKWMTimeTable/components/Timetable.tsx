@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable curly */
 /* eslint-disable prettier/prettier */
 /* eslint-disable prettier/prettier */
@@ -15,6 +16,7 @@ import {
 } from 'react-native';
 import {StoreDataType} from '../storage';
 import {filterOptionList} from './Settings';
+
 export enum WeekType {
   Odd = 'N',
   Even = 'P',
@@ -35,6 +37,7 @@ type DayBarProps = {
 };
 
 const DayBar = ({day, setDay, weekType}: DayBarProps) => {
+
   const previousDay = () => {
     let newWeekType: WeekType = weekType;
     let index = Object.values(Day).indexOf(day);

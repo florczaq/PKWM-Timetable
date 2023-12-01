@@ -6,7 +6,13 @@ import Settings, {filterOptionList} from './components/Settings';
 import {Day, Timetable, WeekType} from './components/Timetable';
 import TopBar from './components/TopBar';
 import {getData} from './script';
-import {StoreDataType, getData as getStorageData, storeData} from './storage';
+import {
+  StoreDataType,
+  getDay,
+  getData as getStorageData,
+  storeData,
+  storeDay,
+} from './storage';
 
 type Data = {
   data: [];
@@ -36,9 +42,14 @@ const Home = () => {
 
   useEffect(() => {
     getData(setData, filterData.data.oddzial);
+    getDay().then(res => {
+      if (res != null) {
+        setDay(res.day);
+        setWeek(res.week);
+      }
+    });
     getStorageData()
       .then(res => {
-        console.log(res);
         if (res != null) setFilterData(res);
       })
       .catch(e => console.error(e));
@@ -53,6 +64,7 @@ const Home = () => {
   const changeDay = (newDay: Day, newWeek: WeekType) => {
     setDay(newDay);
     setWeek(newWeek);
+    storeDay(newDay, newWeek);
   };
 
   return (

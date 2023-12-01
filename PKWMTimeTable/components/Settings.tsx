@@ -9,7 +9,7 @@ import {StoreDataType} from '../storage';
 export const filterOptionList = {
   oddzial_list: ['11K1', '11K2', '11K3'],
   grupa_L_list: ['L01', 'L02', 'L03', 'L04', 'L05', 'L06'],
-  grupa_K_list: ['K01', 'K02', 'K03', 'K04', 'K05'],
+  grupa_K_list: ['K01', 'K02', 'K03', 'K04', 'K05', 'K06'],
 };
 
 type SelectList = {

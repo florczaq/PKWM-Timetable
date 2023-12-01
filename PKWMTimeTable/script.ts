@@ -49,7 +49,6 @@ export const getData = (setDataState: any, oddzial: string) => {
   const src = oddzialList.filter(x => {
     return x.name === oddzial;
   });
-  console.log(src, oddzial);
   axios
     .get(src[0].link)
     .then((response: {data: string}) => {
