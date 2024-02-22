@@ -37,7 +37,6 @@ type DayBarProps = {
 };
 
 const DayBar = ({day, setDay, weekType}: DayBarProps) => {
-
   const previousDay = () => {
     let newWeekType: WeekType = weekType;
     let index = Object.values(Day).indexOf(day);
@@ -155,14 +154,22 @@ export const Timetable = ({
 }: TimetableType) => {
   const checkFilters = (name: string): boolean => {
     let correct: boolean = true;
+
     filterOptionList.grupa_K_list.forEach(e => {
       if (e !== filterOptions.data.grupa_K && name.indexOf(e) !== -1)
         correct = false;
     });
+
     filterOptionList.grupa_L_list.forEach(e => {
       if (e !== filterOptions.data.grupa_L && name.indexOf(e) !== -1)
         correct = false;
     });
+
+    filterOptionList.grupa_P_list.forEach(e => {
+      if (e !== filterOptions.data.grupa_L && name.indexOf(e) !== -1)
+        correct = false;
+    });
+
     return correct;
   };
 
