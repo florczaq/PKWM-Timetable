@@ -29,6 +29,7 @@ const SelectList = ({data, setValue, value, label}: SelectList) => {
         })}
         labelField={'label'}
         valueField={'value'}
+        placeholder="Oddział"
         onChange={v => {
           setValue(label, v.value);
         }}
@@ -36,6 +37,7 @@ const SelectList = ({data, setValue, value, label}: SelectList) => {
         itemTextStyle={{textAlign: 'center', color: '#fff'}}
         activeColor="transparent"
         value={value}
+        placeholderStyle={{textAlign: 'center', color: '#fff'}}
         selectedTextStyle={{textAlign: 'center', color: '#fff'}}
         maxHeight={200}
         dropdownPosition="bottom"

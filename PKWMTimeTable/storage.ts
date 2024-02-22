@@ -3,7 +3,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Day, WeekType} from './components/Timetable';
 
 export type StoreDataType = {
-  data: {oddzial: string; grupa_K: string; grupa_L: string; grupa_P: string};
+  data: {
+    oddzial: string;
+    grupa_K: string;
+    grupa_L: string;
+    grupa_P: string;
+  };
 };
 
 export const storeData = async (value: StoreDataType) => {
