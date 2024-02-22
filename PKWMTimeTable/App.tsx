@@ -25,9 +25,10 @@ const Home = () => {
   const [tt_data, setData] = useState<Data>({data: [], hours: []});
   const [filterData, setFilterData] = useState<StoreDataType>({
     data: {
-      oddzial: filterOptionList.oddzial_list[0],
+      oddzial: '',
       grupa_K: filterOptionList.grupa_K_list[0],
       grupa_L: filterOptionList.grupa_L_list[0],
+      grupa_P: filterOptionList.grupa_P_list[0],
     },
   });
   const [modaVisible, setModalVisible] = useState<boolean>(false);
@@ -136,4 +137,3 @@ const start = () => {
 };
 
 export default start;
-// https://react-native-async-storage.github.io/async-storage/docs/usage

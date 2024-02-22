@@ -1,7 +1,9 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable curly */
 import axios from 'axios';
 const cheerio = require('cheerio');
+
 const alterHTML = (data = '') => {
   return data
     .replaceAll('<br>', ' ')
@@ -14,7 +16,6 @@ const alterHTML = (data = '') => {
     .replaceAll('</a>', '</span>');
 };
 
-//Zczytywanie godzi z planu lekcji
 const getHours = ($: any): string[] => {
   const hours: string[] = [];
   $('td.g')
@@ -26,66 +27,82 @@ const getHours = ($: any): string[] => {
   return hours;
 };
 
-const oddzialList = [
-  {
-    name: '11K1',
-    link: 'http://podzial.mech.pk.edu.pl/stacjonarne/html/plany/o7.html',
-  },
-  {
-    name: '11K2',
-    link: 'http://podzial.mech.pk.edu.pl/stacjonarne/html/plany/o8.html',
-  },
-  {
-    name: '11K3',
-    link: 'http://podzial.mech.pk.edu.pl/stacjonarne/html/plany/o9.html',
-  },
-];
+const getOddzialURL = (oddzial: any, res: any) =>
+  res.filter((x: any) => x.name === oddzial)[0]?.link;
 
-/**
- * @param setDataState
- * @returns data, hours
- */
-export const getData = (setDataState: any, oddzial: string) => {
-  const src = oddzialList.filter(x => {
-    return x.name === oddzial;
-  });
+type OddzialType = {
+  name: string;
+  link: string;
+};
+
+export const getOdzialList = new Promise((resolve, reject) => {
+  const list: OddzialType[] = [];
   axios
-    .get(src[0].link)
-    .then((response: {data: string}) => {
-      const $ = cheerio.load(alterHTML(response.data));
-      const hours = getHours($);
-      const table = $('table');
-      const data: [] = [];
-
-      table
-        .find('table tbody tr td table tbody tr')
-        .each((i: any, row: any) => {
-          let rowData: [] = [];
-          if (i === 0) return;
-          $(row).each((j: any, cell: any) => {
-            $(cell)
-              .find('td.l')
-              .each((k: any, td: any) => {
-                const temp: [] = [];
-                let s = '';
-                $(td)
-                  .find('span')
-                  .each((m: any, span: any) => {
-                    const text = $(span).text();
-                    if (text.indexOf('#') === -1 && text.length !== 2) {
-                      if (s === '') s = text;
-                      else {
-                        temp.push({name: s, classroom: text});
-                        s = '';
-                      }
-                    }
-                  });
-                rowData.push(temp);
-              });
-            data.push(rowData);
+    .get('http://podzial.mech.pk.edu.pl/stacjonarne/html/lista.html')
+    .then((res: any) => {
+      const $ = cheerio.load(res.data);
+      $('#oddzialy .el a')
+        .toArray()
+        .forEach((e: any, i: number) => {
+          list.push({
+            name: $(e).text(),
+            link: $(e).attr('href'),
           });
         });
-      setDataState({data: data, hours: hours});
+      resolve(list);
     })
-    .catch(err => console.error(err));
+    .catch((e: any) => {
+      console.error(1, e);
+      reject([]);
+    });
+  return list;
+});
+
+export const getData = (setDataState: any, oddzial: string) => {
+  let src = '';
+  getOdzialList
+    .then((res: any) => {
+      src = getOddzialURL(oddzial, res);
+    })
+    .then(r => {
+      axios
+        .get(`http://podzial.mech.pk.edu.pl/stacjonarne/html/${src}`)
+        .then((response: {data: string}) => {
+          const $ = cheerio.load(alterHTML(response.data));
+          const hours = getHours($);
+          const table = $('table');
+          const data: any[] = [];
+
+          table
+            .find('table tbody tr td table tbody tr')
+            .each((i: any, row: any) => {
+              let rowData: any[] = [];
+              if (i === 0) return;
+              $(row).each((j: any, cell: any) => {
+                $(cell)
+                  .find('td.l')
+                  .each((k: any, td: any) => {
+                    const temp: any[] = [];
+                    let s = '';
+                    $(td)
+                      .find('span')
+                      .each((m: any, span: any) => {
+                        const text = $(span).text();
+                        if (text.indexOf('#') === -1 && text.length !== 2) {
+                          if (s === '') s = text;
+                          else {
+                            temp.push({name: s, classroom: text});
+                            s = '';
+                          }
+                        }
+                      });
+                    rowData.push(temp);
+                  });
+                data.push(rowData);
+              });
+            });
+          setDataState({data: data, hours: hours});
+        })
+        .catch(err => console.error(2, err.message));
+    });
 };

@@ -1,15 +1,16 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Dropdown} from 'react-native-element-dropdown';
 import {StoreDataType} from '../storage';
+import {getOdzialList} from '../script';
 
 export const filterOptionList = {
-  oddzial_list: ['11K1', '11K2', '11K3'],
   grupa_L_list: ['L01', 'L02', 'L03', 'L04', 'L05', 'L06'],
   grupa_K_list: ['K01', 'K02', 'K03', 'K04', 'K05', 'K06'],
+  grupa_P_list: ['P01', 'P02', 'P03', 'P04', 'P05', 'P06'],
 };
 
 type SelectList = {
@@ -18,6 +19,7 @@ type SelectList = {
   value: string;
   label: string;
 };
+
 const SelectList = ({data, setValue, value, label}: SelectList) => {
   return (
     <View style={styles.optionSelectList}>
@@ -50,6 +52,17 @@ type Settings = {
 
 const Settings = ({closeModal, filterData}: Settings) => {
   const [activeOptions, setActiveOptions] = useState<StoreDataType>(filterData);
+  const [oddzialList, setOddzialList] = useState([]);
+
+  useEffect(() => {
+    getOdzialList
+      .then((res: any) => {
+        let temp: any = [];
+        temp = res.map((e: any) => e.name);
+        setOddzialList(temp);
+      })
+      .catch(err => console.error(3, err.message));
+  }, []);
 
   const onDataChange = (label: string, newValue: string) => {
     switch (label) {
@@ -59,6 +72,7 @@ const Settings = ({closeModal, filterData}: Settings) => {
             oddzial: newValue,
             grupa_K: activeOptions.data.grupa_K,
             grupa_L: activeOptions.data.grupa_L,
+            grupa_P: activeOptions.data.grupa_P,
           },
         });
         break;
@@ -68,6 +82,7 @@ const Settings = ({closeModal, filterData}: Settings) => {
             oddzial: activeOptions.data.oddzial,
             grupa_K: newValue,
             grupa_L: activeOptions.data.grupa_L,
+            grupa_P: activeOptions.data.grupa_P,
           },
         });
         break;
@@ -77,6 +92,17 @@ const Settings = ({closeModal, filterData}: Settings) => {
             oddzial: activeOptions.data.oddzial,
             grupa_K: activeOptions.data.grupa_K,
             grupa_L: newValue,
+            grupa_P: activeOptions.data.grupa_P,
+          },
+        });
+        break;
+      case 'grupa_P':
+        setActiveOptions({
+          data: {
+            oddzial: activeOptions.data.oddzial,
+            grupa_K: activeOptions.data.grupa_K,
+            grupa_L: activeOptions.data.grupa_L,
+            grupa_P: newValue,
           },
         });
         break;
@@ -87,7 +113,7 @@ const Settings = ({closeModal, filterData}: Settings) => {
     <View style={styles.container}>
       <View style={styles.option}>
         <SelectList
-          data={filterOptionList.oddzial_list}
+          data={oddzialList}
           value={activeOptions.data.oddzial}
           label={'oddzial'}
           setValue={onDataChange}
@@ -109,6 +135,14 @@ const Settings = ({closeModal, filterData}: Settings) => {
           label={'grupa_K'}
         />
       </View>
+      <View style={styles.option}>
+        <SelectList
+          data={filterOptionList.grupa_P_list}
+          setValue={onDataChange}
+          value={activeOptions.data.grupa_P}
+          label={'grupa_P'}
+        />
+      </View>
       <TouchableOpacity
         style={styles.bottomBar}
         onPress={() => closeModal(activeOptions)}>
@@ -123,7 +157,7 @@ const Settings = ({closeModal, filterData}: Settings) => {
 const styles = StyleSheet.create({
   container: {
     width: '90%',
-    height: '50%',
+    height: '60%',
     borderWidth: 1,
     borderRadius: 20,
     backgroundColor: '#222',
