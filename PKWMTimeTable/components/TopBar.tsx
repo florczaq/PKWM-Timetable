@@ -29,6 +29,7 @@ type TopBar = {
   storageData: StoreDataType;
   openModal: () => void;
 };
+//TODO get rid of ustawienia dependecy
 const TopBar = ({title = 'Title', openModal}: TopBar) => {
   return (
     <View style={styles.container}>

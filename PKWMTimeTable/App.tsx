@@ -31,15 +31,13 @@ const Home = () => {
       grupa_P: filterOptionList.grupa_P_list[0],
     },
   });
-  const [modaVisible, setModalVisible] = useState<boolean>(false);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
   const backgroundStyle = {
     backgroundColor: '#222',
     flex: 1,
   };
 
-  const loadData = () => {
-    getData(setData, filterData.data.oddzial);
-  };
+  const loadData = () => getData(setData, filterData.data.oddzial);
 
   useEffect(() => {
     getData(setData, filterData.data.oddzial);
@@ -81,7 +79,7 @@ const Home = () => {
       />
       <Modal
         animationType="fade"
-        visible={modaVisible}
+        visible={modalVisible}
         transparent
         onRequestClose={() => console.log('close')}>
         <View style={styles.modal}>

@@ -59,6 +59,7 @@ const Settings = ({closeModal, filterData}: Settings) => {
   useEffect(() => {
     getOdzialList
       .then((res: any) => {
+        //REDO get rid off temporary variable
         let temp: any = [];
         temp = res.map((e: any) => e.name);
         setOddzialList(temp);
@@ -66,6 +67,7 @@ const Settings = ({closeModal, filterData}: Settings) => {
       .catch(err => console.error(3, err.message));
   }, []);
 
+  //REDO pass whole data set and make changes on it, get rid of big swtich case
   const onDataChange = (label: string, newValue: string) => {
     switch (label) {
       case 'oddzial':

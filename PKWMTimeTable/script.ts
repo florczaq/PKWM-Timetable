@@ -21,9 +21,7 @@ const getHours = ($: any): string[] => {
   $('td.g')
     .contents()
     .toArray()
-    .forEach((e: any, i: number) => {
-      hours.push(e.data.trim());
-    });
+    .forEach((e: any, i: number) => hours.push(e.data.trim()));
   return hours;
 };
 
@@ -43,12 +41,12 @@ export const getOdzialList = new Promise((resolve, reject) => {
       const $ = cheerio.load(res.data);
       $('#oddzialy .el a')
         .toArray()
-        .forEach((e: any, i: number) => {
+        .forEach((e: any, i: number) =>
           list.push({
             name: $(e).text(),
             link: $(e).attr('href'),
-          });
-        });
+          }),
+        );
       resolve(list);
     })
     .catch((e: any) => {
@@ -58,12 +56,12 @@ export const getOdzialList = new Promise((resolve, reject) => {
   return list;
 });
 
+//REDO: make async
+//TODO clear the code
 export const getData = (setDataState: any, oddzial: string) => {
   let src = '';
   getOdzialList
-    .then((res: any) => {
-      src = getOddzialURL(oddzial, res);
-    })
+    .then((res: any) => (src = getOddzialURL(oddzial, res))) //-
     .then(r => {
       axios
         .get(`http://podzial.mech.pk.edu.pl/stacjonarne/html/${src}`)
