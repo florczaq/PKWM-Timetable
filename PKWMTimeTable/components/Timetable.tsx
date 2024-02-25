@@ -14,8 +14,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { StoreDataType } from '../storage';
-import { filterOptionList } from './Settings';
+import {StoreDataType} from '../storage';
+import {filterOptionList} from './Settings';
 
 export enum WeekType {
   Odd = 'N',
@@ -36,7 +36,7 @@ type DayBarProps = {
   weekType: WeekType;
 };
 
-const DayBar = ({ day, setDay, weekType }: DayBarProps) => {
+const DayBar = ({day, setDay, weekType}: DayBarProps) => {
   const previousDay = () => {
     let newWeekType: WeekType = weekType;
     let index = Object.values(Day).indexOf(day);
@@ -72,7 +72,7 @@ const DayBar = ({ day, setDay, weekType }: DayBarProps) => {
       <TouchableOpacity
         style={style.dayBar_button}
         onPress={() => previousDay()}>
-        <Text style={[style.dayBar_text, { fontSize: 30 }]}>{'<'}</Text>
+        <Text style={[style.dayBar_text, {fontSize: 30}]}>{'<'}</Text>
       </TouchableOpacity>
 
       <Text style={style.dayBar_text}>
@@ -80,7 +80,7 @@ const DayBar = ({ day, setDay, weekType }: DayBarProps) => {
       </Text>
 
       <TouchableOpacity style={style.dayBar_button} onPress={() => nextDay()}>
-        <Text style={[style.dayBar_text, , { fontSize: 30 }]}>{'>'}</Text>
+        <Text style={[style.dayBar_text, , {fontSize: 30}]}>{'>'}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -91,7 +91,7 @@ type SubjectsList = {
   data: [] | [][] | undefined | [{}][];
   loadData: () => void;
 };
-const SubjectsList = ({ hours, data, loadData }: SubjectsList) => {
+const SubjectsList = ({hours, data, loadData}: SubjectsList) => {
   const [refreshing, setRefreshing] = React.useState(false);
 
   //TODO refresh disable on data load
@@ -112,7 +112,6 @@ const SubjectsList = ({ hours, data, loadData }: SubjectsList) => {
         {data?.map((element, index) => {
           return (
             <View style={style.subject} key={index}>
-
               <View style={style.subject_hour}>
                 <Text style={style.text}>{hours[index]}</Text>
               </View>
@@ -176,34 +175,36 @@ export const Timetable = ({
     return correct;
   };
 
+  const isElementOdd = (element: any, i: number): boolean => {
+    if (
+      element[i].name.indexOf('(P)') === -1 &&
+      element[i].name.indexOf('-(p') === -1 &&
+      checkFilters(element[i].name)
+    )
+      return true;
+    return false;
+  };
 
-  
+  const isElementEven = (element: any, i: number): boolean => {
+    if (
+      element[i].name.indexOf('(N)') === -1 &&
+      element[i].name.indexOf('-(n') === -1 &&
+      checkFilters(element[i].name)
+    )
+      return true;
+    return false;
+  };
 
   const data: [][] | [{}][] | undefined = subjects
     .map((element: any) => element[Object.values(Day).indexOf(day)])
     .map((element: any) => {
       const temp: [] | any = [];
       if (weekType === WeekType.Odd) {
-        for (let i = 0; i < element?.length || 0; i++) {
-          //TODO split odd and even validation to seperate functions
-          if (
-            element[i].name.indexOf('(P)') === -1 &&
-            element[i].name.indexOf('-(p') === -1 &&
-            checkFilters(element[i].name)
-          ) {
-            temp.push(element[i]);
-          }
-        }
+        for (let i = 0; i < element?.length || 0; i++)
+          if (isElementOdd(element, i)) temp.push(element[i]);
       } else {
-        for (let i = 0; i < element?.length || 0; i++) {
-          if (
-            element[i].name.indexOf('(N)') === -1 &&
-            element[i].name.indexOf('-(n') === -1 &&
-            checkFilters(element[i].name)
-          ) {
-            temp.push(element[i]);
-          }
-        }
+        for (let i = 0; i < element?.length || 0; i++)
+          if (isElementEven(element, i)) temp.push(element[i]);
       }
       return temp;
     });
