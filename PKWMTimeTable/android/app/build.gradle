@@ -90,9 +90,9 @@ android {
         }
         release {
             storeFile file('your_key_name.keystore')
-            storePassword '1qazxsw2'
+            storePassword 'password'
             keyAlias 'your_key_alias'
-            keyPassword '1qazxsw2'
+            keyPassword 'password'
     }
     }
     buildTypes {
