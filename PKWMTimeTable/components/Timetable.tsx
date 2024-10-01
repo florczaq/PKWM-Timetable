@@ -177,7 +177,7 @@ export const Timetable = ({
 
   const isElementOdd = (element: any, i: number): boolean => {
     if (
-      element[i].name.indexOf('(P)') === -1 &&
+      element[i].name.indexOf('(P') === -1 &&
       element[i].name.indexOf('-(p') === -1 &&
       checkFilters(element[i].name)
     )
@@ -187,7 +187,7 @@ export const Timetable = ({
 
   const isElementEven = (element: any, i: number): boolean => {
     if (
-      element[i].name.indexOf('(N)') === -1 &&
+      element[i].name.indexOf('(N') === -1 &&
       element[i].name.indexOf('-(n') === -1 &&
       checkFilters(element[i].name)
     )
