@@ -51,6 +51,14 @@ const Home = () => {
 
   const loadData = () => getData(setData, filterData.data.oddzial);
 
+  const changeWeek = () => {
+    setWeek(
+      Object.values(WeekType).at(
+        (Object.values(WeekType).indexOf(week) + 1) % 2,
+      ) || WeekType.Even,
+    );
+  };
+
   useEffect(() => {
     getData(setData, filterData.data.oddzial);
     getDay().then(res => {
@@ -113,6 +121,7 @@ const Home = () => {
         loadData={loadData}
         filterOptions={filterData}
         landscape={landscape}
+        changeWeek={changeWeek}
       />
     </SafeAreaView>
   );

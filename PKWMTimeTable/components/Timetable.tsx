@@ -89,12 +89,15 @@ const DayBar = ({day, setDay, weekType}: DayBarProps) => {
 
 type WeekBarProps = {
   weekType: WeekType;
+  changeWeek: () => void;
 };
 
-const WeekBar = ({weekType}: WeekBarProps) => {
+const WeekBar = ({weekType, changeWeek}: WeekBarProps) => {
   return (
     <View style={[style.dayBar, {height: 50}]}>
-      <TouchableOpacity style={style.dayBar_button} onPress={() => {}}>
+      <TouchableOpacity
+        style={style.dayBar_button}
+        onPress={() => changeWeek()}>
         <Text style={[style.dayBar_text, {fontSize: 30}]}>{'<'}</Text>
       </TouchableOpacity>
 
@@ -102,7 +105,9 @@ const WeekBar = ({weekType}: WeekBarProps) => {
         {weekType === WeekType.Odd ? 'Nieparzysty' : 'Parzysty'}
       </Text>
 
-      <TouchableOpacity style={style.dayBar_button} onPress={() => {}}>
+      <TouchableOpacity
+        style={style.dayBar_button}
+        onPress={() => changeWeek()}>
         <Text style={[style.dayBar_text, , {fontSize: 30}]}>{'>'}</Text>
       </TouchableOpacity>
     </View>
@@ -180,8 +185,14 @@ const WeekSubjectsList = ({hours, data, loadData}: WeekSubjectsListType) => {
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }>
-      <View style={[{flexDirection: 'row'}]}>
-        <View style={[{width: '16.6%'}]}>
+      <View
+        style={[
+          {
+            flexDirection: 'row',
+            width: '100%',
+          },
+        ]}>
+        <View style={[{width: '16.66666%'}]}>
           {data?.at(0)?.map((element, index) => {
             return (
               <View
@@ -191,6 +202,7 @@ const WeekSubjectsList = ({hours, data, loadData}: WeekSubjectsListType) => {
                     height: 40,
                     borderColor: 'black',
                     borderWidth: 1,
+                    justifyContent: 'center',
                   },
                 ]}
                 key={index}>
@@ -203,8 +215,8 @@ const WeekSubjectsList = ({hours, data, loadData}: WeekSubjectsListType) => {
         </View>
         {Object.values(Day).map((_, dayIndex) => {
           return (
-            <View style={[{width: '16.6%'}]}>
-              {data?.at(dayIndex)?.map((element: any, index) => {
+            <View style={[{width: '16.66666%'}]} key={dayIndex}>
+              {data?.at(dayIndex)?.map((subjectName: any, index) => {
                 return (
                   <View
                     style={[
@@ -213,11 +225,12 @@ const WeekSubjectsList = ({hours, data, loadData}: WeekSubjectsListType) => {
                         height: 40,
                         borderColor: 'black',
                         borderWidth: 1,
+                        justifyContent: 'center',
                       },
                     ]}
                     key={index}>
                     <View style={[]}>
-                      <Text style={style.text}>{element.at(0)?.name}</Text>
+                      <Text style={style.text}>{subjectName}</Text>
                     </View>
                   </View>
                 );
@@ -259,20 +272,24 @@ type DisplayOnLandscapeType = {
   hours: [];
   getWeekData: () => [][] | [{}][] | undefined;
   loadData: () => void;
+  changeWeek: () => void;
 };
 const DisplayOnLandscape = ({
   weekType,
   hours,
   getWeekData,
   loadData,
+  changeWeek,
 }: DisplayOnLandscapeType) => {
   const [data, setData] = useState<[][] | [{}][] | undefined>([]);
+
   useEffect(() => {
     setData(getWeekData());
   }, [getWeekData]);
+
   return (
     <>
-      <WeekBar weekType={weekType} />
+      <WeekBar weekType={weekType} changeWeek={changeWeek} />
       <WeekSubjectsList hours={hours} data={data} loadData={loadData} />
     </>
   );
@@ -287,6 +304,7 @@ type TimetableType = {
   loadData: () => void;
   filterOptions: StoreDataType;
   landscape: boolean;
+  changeWeek: () => void;
 };
 
 export const Timetable = ({
@@ -298,6 +316,7 @@ export const Timetable = ({
   loadData,
   filterOptions,
   landscape,
+  changeWeek,
 }: TimetableType) => {
   const checkFilters = (name: string): boolean => {
     let correct: boolean = true;
@@ -362,13 +381,13 @@ export const Timetable = ({
         subjects
           .map((element: any) => element[dayIndex])
           .map((element: any) => {
-            const temp: [] | any = [];
+            let temp: string = '';
             if (weekType === WeekType.Odd) {
               for (let i = 0; i < element?.length || 0; i++)
-                if (isElementOdd(element, i)) temp.push(element[i]);
+                if (isElementOdd(element, i)) temp = element[i]?.name;
             } else {
               for (let i = 0; i < element?.length || 0; i++)
-                if (isElementEven(element, i)) temp.push(element[i]);
+                if (isElementEven(element, i)) temp = element[i]?.name;
             }
             return temp;
           }),
@@ -386,6 +405,7 @@ export const Timetable = ({
           hours={hours}
           getWeekData={getWeekData}
           loadData={loadData}
+          changeWeek={changeWeek}
         />
       ) : (
         <DisplayOnPortrair
