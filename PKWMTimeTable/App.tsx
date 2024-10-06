@@ -80,7 +80,7 @@ const Home = () => {
 
   const handleLayoutChange = () => {
     const {height, width} = Dimensions.get('window');
-    console.warn('Layout Changed | Landscape:', height < width);
+    // console.warn('Layout Changed | Landscape:', height < width);
     setOrientationLandscape(height < width);
   };
 

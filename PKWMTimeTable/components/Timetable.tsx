@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prettier/prettier */
 /* eslint-disable curly */
@@ -5,8 +6,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable no-sparse-arrays */
-/* eslint-disable prettier/prettier */
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   RefreshControl,
   ScrollView,
@@ -93,7 +93,7 @@ type WeekBarProps = {
 
 const WeekBar = ({weekType}: WeekBarProps) => {
   return (
-    <View style={style.dayBar}>
+    <View style={[style.dayBar, {height: 50}]}>
       <TouchableOpacity style={style.dayBar_button} onPress={() => {}}>
         <Text style={[style.dayBar_text, {fontSize: 30}]}>{'<'}</Text>
       </TouchableOpacity>
@@ -158,6 +158,78 @@ const SubjectsList = ({hours, data, loadData}: SubjectsListType) => {
   );
 };
 
+type WeekSubjectsListType = {
+  hours: [];
+  data: [] | [][] | undefined | [{}][];
+  loadData: () => void;
+};
+const WeekSubjectsList = ({hours, data, loadData}: WeekSubjectsListType) => {
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  //TODO refresh disable on data load
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    loadData();
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1500);
+  }, [loadData]);
+
+  return (
+    <ScrollView
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }>
+      <View style={[{flexDirection: 'row'}]}>
+        <View style={[{width: '16.6%'}]}>
+          {data?.at(0)?.map((element, index) => {
+            return (
+              <View
+                style={[
+                  {
+                    width: '100%',
+                    height: 40,
+                    borderColor: 'black',
+                    borderWidth: 1,
+                  },
+                ]}
+                key={index}>
+                <View style={[]}>
+                  <Text style={style.text}>{hours[index]}</Text>
+                </View>
+              </View>
+            );
+          })}
+        </View>
+        {Object.values(Day).map((_, dayIndex) => {
+          return (
+            <View style={[{width: '16.6%'}]}>
+              {data?.at(dayIndex)?.map((element: any, index) => {
+                return (
+                  <View
+                    style={[
+                      {
+                        width: '100%',
+                        height: 40,
+                        borderColor: 'black',
+                        borderWidth: 1,
+                      },
+                    ]}
+                    key={index}>
+                    <View style={[]}>
+                      <Text style={style.text}>{element.at(0)?.name}</Text>
+                    </View>
+                  </View>
+                );
+              })}
+            </View>
+          );
+        })}
+      </View>
+    </ScrollView>
+  );
+};
+
 type DisplayOnPortrairType = {
   day: Day;
   setDay: (newDay: Day, newWeek: WeekType) => void;
@@ -183,13 +255,25 @@ const DisplayOnPortrair = ({
 };
 
 type DisplayOnLandscapeType = {
-  weekType: WeekType
-}
-const DisplayOnLandscape = ({weekType}: DisplayOnLandscapeType) => {
+  weekType: WeekType;
+  hours: [];
+  getWeekData: () => [][] | [{}][] | undefined;
+  loadData: () => void;
+};
+const DisplayOnLandscape = ({
+  weekType,
+  hours,
+  getWeekData,
+  loadData,
+}: DisplayOnLandscapeType) => {
+  const [data, setData] = useState<[][] | [{}][] | undefined>([]);
+  useEffect(() => {
+    setData(getWeekData());
+  }, [getWeekData]);
   return (
     <>
-      <WeekBar weekType={weekType}/>
-      <Text>{'Landscape'}</Text>
+      <WeekBar weekType={weekType} />
+      <WeekSubjectsList hours={hours} data={data} loadData={loadData} />
     </>
   );
 };
@@ -270,11 +354,39 @@ export const Timetable = ({
       return temp;
     });
 
+  const getWeekData = (): [][] | [{}][] | undefined => {
+    let week: any[] = [];
+    let dayIndex: number = 0;
+    while (dayIndex < Object.values(Day).length) {
+      week.push(
+        subjects
+          .map((element: any) => element[dayIndex])
+          .map((element: any) => {
+            const temp: [] | any = [];
+            if (weekType === WeekType.Odd) {
+              for (let i = 0; i < element?.length || 0; i++)
+                if (isElementOdd(element, i)) temp.push(element[i]);
+            } else {
+              for (let i = 0; i < element?.length || 0; i++)
+                if (isElementEven(element, i)) temp.push(element[i]);
+            }
+            return temp;
+          }),
+      );
+      dayIndex++;
+    }
+    return week;
+  };
+
   return (
     <>
-      {console.log(landscape)}
       {landscape ? (
-        <DisplayOnLandscape weekType={weekType}/>
+        <DisplayOnLandscape
+          weekType={weekType}
+          hours={hours}
+          getWeekData={getWeekData}
+          loadData={loadData}
+        />
       ) : (
         <DisplayOnPortrair
           day={day}
