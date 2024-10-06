@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable curly */
 import React, {useEffect, useState} from 'react';
 import {
@@ -109,7 +108,11 @@ const Home = () => {
         transparent
         onRequestClose={() => console.log('close')}>
         <View style={styles.modal}>
-          <Settings closeModal={closeModal} filterData={filterData} />
+          <Settings
+            closeModal={closeModal}
+            filterData={filterData}
+            landscape={landscape}
+          />
         </View>
       </Modal>
       <Timetable

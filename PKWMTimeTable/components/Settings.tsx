@@ -50,9 +50,10 @@ const SelectList = ({data, setValue, value, label}: SelectList) => {
 type Settings = {
   closeModal: (newFilterData: StoreDataType) => void;
   filterData: StoreDataType;
+  landscape: boolean;
 };
 
-const Settings = ({closeModal, filterData}: Settings) => {
+const Settings = ({closeModal, filterData, landscape}: Settings) => {
   const [activeOptions, setActiveOptions] = useState<StoreDataType>(filterData);
   const [oddzialList, setOddzialList] = useState([]);
 
@@ -114,8 +115,9 @@ const Settings = ({closeModal, filterData}: Settings) => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.option}>
+    <View style={[styles.container, {height: landscape ? '90%' : '60%'}]}>
+       {/*TODO rewrite */}
+      <View style={[styles.option, {height: landscape ? 60 : 80}]}>
         <SelectList
           data={oddzialList}
           value={activeOptions.data.oddzial}
@@ -123,7 +125,7 @@ const Settings = ({closeModal, filterData}: Settings) => {
           setValue={onDataChange}
         />
       </View>
-      <View style={styles.option}>
+      <View style={[styles.option, {height: landscape ? 60 : 80}]}>
         <SelectList
           data={filterOptionList.grupa_L_list}
           setValue={onDataChange}
@@ -131,7 +133,7 @@ const Settings = ({closeModal, filterData}: Settings) => {
           label={'grupa_L'}
         />
       </View>
-      <View style={styles.option}>
+      <View style={[styles.option, {height: landscape ? 60 : 80}]}>
         <SelectList
           data={filterOptionList.grupa_K_list}
           setValue={onDataChange}
@@ -139,7 +141,7 @@ const Settings = ({closeModal, filterData}: Settings) => {
           label={'grupa_K'}
         />
       </View>
-      <View style={styles.option}>
+      <View style={[styles.option, {height: landscape ? 60 : 80}]}>
         <SelectList
           data={filterOptionList.grupa_P_list}
           setValue={onDataChange}
@@ -161,7 +163,7 @@ const Settings = ({closeModal, filterData}: Settings) => {
 const styles = StyleSheet.create({
   container: {
     width: '90%',
-    height: '60%',
+    height: '50%',
     borderWidth: 1,
     borderRadius: 20,
     backgroundColor: '#222',
@@ -170,7 +172,7 @@ const styles = StyleSheet.create({
   },
   option: {
     width: '100%',
-    height: 70,
+    height: 60,
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
