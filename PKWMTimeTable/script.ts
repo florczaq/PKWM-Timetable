@@ -90,7 +90,6 @@ export const getData = (setDataState: any, oddzial: string) => {
                           if (s === '') s = text;
                           else {
                             temp.push({name: s, classroom: text});
-                            console.log(s);
                             s = '';
                           }
                         }
@@ -103,6 +102,6 @@ export const getData = (setDataState: any, oddzial: string) => {
           setDataState({data: data, hours: hours});
         }
       )
-        .catch(err => console.error(2, err.message));
+        .catch(err => console.error('#GET DATA:', err.message));
     });
 };

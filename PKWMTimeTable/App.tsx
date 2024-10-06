@@ -1,6 +1,14 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable curly */
 import React, {useEffect, useState} from 'react';
-import {Modal, SafeAreaView, StatusBar, StyleSheet, View} from 'react-native';
+import {
+  Dimensions,
+  Modal,
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
+  View,
+} from 'react-native';
 import {Navigation} from 'react-native-navigation';
 import Settings, {filterOptionList} from './components/Settings';
 import {Day, Timetable, WeekType} from './components/Timetable';
@@ -23,6 +31,10 @@ const Home = () => {
   const [day, setDay] = useState<Day>(Day.Monday);
   const [week, setWeek] = useState<WeekType>(WeekType.Odd);
   const [tt_data, setData] = useState<Data>({data: [], hours: []});
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [landscape, setOrientationLandscape] = useState<boolean>(
+    Dimensions.get('window').height < Dimensions.get('window').width,
+  );
   const [filterData, setFilterData] = useState<StoreDataType>({
     data: {
       oddzial: '',
@@ -31,7 +43,7 @@ const Home = () => {
       grupa_P: filterOptionList.grupa_P_list[0],
     },
   });
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
+
   const backgroundStyle = {
     backgroundColor: '#222',
     flex: 1,
@@ -66,8 +78,14 @@ const Home = () => {
     storeDay(newDay, newWeek);
   };
 
+  const handleLayoutChange = () => {
+    const {height, width} = Dimensions.get('window');
+    console.warn('Layout Changed | Landscape:', height < width);
+    setOrientationLandscape(height < width);
+  };
+
   return (
-    <SafeAreaView style={backgroundStyle}>
+    <SafeAreaView style={backgroundStyle} onLayout={handleLayoutChange}>
       <StatusBar
         barStyle={'light-content'}
         backgroundColor={backgroundStyle.backgroundColor}
@@ -94,6 +112,7 @@ const Home = () => {
         subjects={tt_data.data}
         loadData={loadData}
         filterOptions={filterData}
+        landscape={landscape}
       />
     </SafeAreaView>
   );

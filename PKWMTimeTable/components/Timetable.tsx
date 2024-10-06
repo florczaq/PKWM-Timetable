@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prettier/prettier */
 /* eslint-disable curly */
 /* eslint-disable prettier/prettier */
@@ -86,12 +87,34 @@ const DayBar = ({day, setDay, weekType}: DayBarProps) => {
   );
 };
 
-type SubjectsList = {
+type WeekBarProps = {
+  weekType: WeekType;
+};
+
+const WeekBar = ({weekType}: WeekBarProps) => {
+  return (
+    <View style={style.dayBar}>
+      <TouchableOpacity style={style.dayBar_button} onPress={() => {}}>
+        <Text style={[style.dayBar_text, {fontSize: 30}]}>{'<'}</Text>
+      </TouchableOpacity>
+
+      <Text style={style.dayBar_text}>
+        {weekType === WeekType.Odd ? 'Nieparzysty' : 'Parzysty'}
+      </Text>
+
+      <TouchableOpacity style={style.dayBar_button} onPress={() => {}}>
+        <Text style={[style.dayBar_text, , {fontSize: 30}]}>{'>'}</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+type SubjectsListType = {
   hours: [];
   data: [] | [][] | undefined | [{}][];
   loadData: () => void;
 };
-const SubjectsList = ({hours, data, loadData}: SubjectsList) => {
+const SubjectsList = ({hours, data, loadData}: SubjectsListType) => {
   const [refreshing, setRefreshing] = React.useState(false);
 
   //TODO refresh disable on data load
@@ -135,6 +158,42 @@ const SubjectsList = ({hours, data, loadData}: SubjectsList) => {
   );
 };
 
+type DisplayOnPortrairType = {
+  day: Day;
+  setDay: (newDay: Day, newWeek: WeekType) => void;
+  weekType: WeekType;
+  hours: [];
+  data: [][] | [{}][] | undefined;
+  loadData: () => void;
+};
+const DisplayOnPortrair = ({
+  day,
+  setDay,
+  weekType,
+  hours,
+  data,
+  loadData,
+}: DisplayOnPortrairType) => {
+  return (
+    <>
+      <DayBar day={day} setDay={setDay} weekType={weekType} />
+      <SubjectsList hours={hours} data={data} loadData={loadData} />
+    </>
+  );
+};
+
+type DisplayOnLandscapeType = {
+  weekType: WeekType
+}
+const DisplayOnLandscape = ({weekType}: DisplayOnLandscapeType) => {
+  return (
+    <>
+      <WeekBar weekType={weekType}/>
+      <Text>{'Landscape'}</Text>
+    </>
+  );
+};
+
 type TimetableType = {
   day: Day;
   setDay: (newDay: Day, newWeek: WeekType) => void;
@@ -143,6 +202,7 @@ type TimetableType = {
   subjects: [];
   loadData: () => void;
   filterOptions: StoreDataType;
+  landscape: boolean;
 };
 
 export const Timetable = ({
@@ -153,6 +213,7 @@ export const Timetable = ({
   subjects,
   loadData,
   filterOptions,
+  landscape,
 }: TimetableType) => {
   const checkFilters = (name: string): boolean => {
     let correct: boolean = true;
@@ -211,8 +272,19 @@ export const Timetable = ({
 
   return (
     <>
-      <DayBar day={day} setDay={setDay} weekType={weekType} />
-      <SubjectsList hours={hours} data={data} loadData={loadData} />
+      {console.log(landscape)}
+      {landscape ? (
+        <DisplayOnLandscape weekType={weekType}/>
+      ) : (
+        <DisplayOnPortrair
+          day={day}
+          setDay={setDay}
+          weekType={weekType}
+          hours={hours}
+          data={data}
+          loadData={loadData}
+        />
+      )}
     </>
   );
 };
