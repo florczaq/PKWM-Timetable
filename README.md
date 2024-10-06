@@ -4,3 +4,6 @@
 3. Agree to all terms
 4. Open settings and choose your groups <br/>
 You are welcome 🫡
+
+### Update 10-06-24
+Now on landscape mode app shows whole week at once 
