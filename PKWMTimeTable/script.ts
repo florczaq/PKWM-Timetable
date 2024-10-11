@@ -7,10 +7,10 @@ const cheerio = require('cheerio');
 const alterHTML = (data = '') => {
   return data
     .replaceAll('<br>', ' ')
-    .replaceAll('</span>-(N)', '-(N)</span>')
-    .replaceAll('</span>-(P)', '-(P)</span>')
-    .replaceAll('</span>-(p.', '-(p.</span>')
-    .replaceAll('</span>-(n.', '-(n.</span>')
+    .replaceAll('</span>-(N', '-(N</span>')
+    .replaceAll('</span>-(P', '-(P</span>')
+    .replaceAll('</span>-(p', '-(p</span>')
+    .replaceAll('</span>-(n', '-(n</span>')
     .replaceAll('<span style="font-size:85%">', '')
     .replaceAll('<a', '<span')
     .replaceAll('</a>', '</span>');

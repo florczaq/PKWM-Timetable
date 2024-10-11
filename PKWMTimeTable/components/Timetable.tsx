@@ -1,5 +1,4 @@
 /* eslint-disable prettier/prettier */
-
 /* eslint-disable prettier/prettier */
 /* eslint-disable curly */
 /* eslint-disable prettier/prettier */
@@ -193,7 +192,7 @@ const WeekSubjectsList = ({hours, data, loadData}: WeekSubjectsListType) => {
           },
         ]}>
         <View style={[{width: '16.66666%'}]}>
-          {data?.at(0)?.map((element, index) => {
+          {data?.at(0)?.map((_, index) => {
             return (
               <View
                 style={[
@@ -245,24 +244,35 @@ const WeekSubjectsList = ({hours, data, loadData}: WeekSubjectsListType) => {
 
 type DisplayOnPortrairType = {
   day: Day;
-  setDay: (newDay: Day, newWeek: WeekType) => void;
   weekType: WeekType;
   hours: [];
-  data: [][] | [{}][] | undefined;
+  getDataFilteredByDay: () => [][] | [{}][] | undefined;
   loadData: () => void;
+  setDay: (newDay: Day, newWeek: WeekType) => void;
 };
 const DisplayOnPortrair = ({
   day,
-  setDay,
-  weekType,
   hours,
-  data,
+  weekType,
+  setDay,
   loadData,
+  getDataFilteredByDay,
 }: DisplayOnPortrairType) => {
+  const [dataFilteredByDay, setDataFilteredByDay] = useState<
+    [][] | [{}][] | undefined
+  >([]);
+  useEffect(
+    () => setDataFilteredByDay(getDataFilteredByDay()),
+    [getDataFilteredByDay],
+  );
   return (
     <>
       <DayBar day={day} setDay={setDay} weekType={weekType} />
-      <SubjectsList hours={hours} data={data} loadData={loadData} />
+      <SubjectsList
+        hours={hours}
+        data={dataFilteredByDay}
+        loadData={loadData}
+      />
     </>
   );
 };
@@ -283,9 +293,7 @@ const DisplayOnLandscape = ({
 }: DisplayOnLandscapeType) => {
   const [data, setData] = useState<[][] | [{}][] | undefined>([]);
 
-  useEffect(() => {
-    setData(getWeekData());
-  }, [getWeekData]);
+  useEffect(() => setData(getWeekData()), [getWeekData]);
 
   return (
     <>
@@ -297,25 +305,25 @@ const DisplayOnLandscape = ({
 
 type TimetableType = {
   day: Day;
-  setDay: (newDay: Day, newWeek: WeekType) => void;
-  weekType: WeekType;
   hours: [];
   subjects: [];
-  loadData: () => void;
-  filterOptions: StoreDataType;
   landscape: boolean;
+  weekType: WeekType;
+  filterOptions: StoreDataType;
+  loadData: () => void;
   changeWeek: () => void;
+  setDay: (newDay: Day, newWeek: WeekType) => void;
 };
 
 export const Timetable = ({
   day,
-  setDay,
-  weekType,
   hours,
+  weekType,
   subjects,
-  loadData,
-  filterOptions,
   landscape,
+  filterOptions,
+  setDay,
+  loadData,
   changeWeek,
 }: TimetableType) => {
   const checkFilters = (name: string): boolean => {
@@ -359,19 +367,21 @@ export const Timetable = ({
     return false;
   };
 
-  const data: [][] | [{}][] | undefined = subjects
-    .map((element: any) => element[Object.values(Day).indexOf(day)])
-    .map((element: any) => {
-      const temp: [] | any = [];
-      if (weekType === WeekType.Odd) {
-        for (let i = 0; i < element?.length || 0; i++)
-          if (isElementOdd(element, i)) temp.push(element[i]);
-      } else {
-        for (let i = 0; i < element?.length || 0; i++)
-          if (isElementEven(element, i)) temp.push(element[i]);
-      }
-      return temp;
-    });
+  const filterDataByDay = (): [][] | [{}][] | undefined => {
+    return subjects
+      .map((element: any) => element[Object.values(Day).indexOf(day)])
+      .map((element: any) => {
+        const temp: [] | any = [];
+        if (weekType === WeekType.Odd) {
+          for (let i = 0; i < element?.length || 0; i++)
+            if (isElementOdd(element, i)) temp.push(element[i]);
+        } else {
+          for (let i = 0; i < element?.length || 0; i++)
+            if (isElementEven(element, i)) temp.push(element[i]);
+        }
+        return temp;
+      });
+  };
 
   const getWeekData = (): [][] | [{}][] | undefined => {
     let week: any[] = [];
@@ -413,8 +423,8 @@ export const Timetable = ({
           setDay={setDay}
           weekType={weekType}
           hours={hours}
-          data={data}
           loadData={loadData}
+          getDataFilteredByDay={filterDataByDay}
         />
       )}
     </>

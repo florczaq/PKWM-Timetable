@@ -26,16 +26,16 @@ const SettingsIcon = ({openModal}: SettingsIcon) => {
 
 type TopBar = {
   title: string;
+  settings: boolean;
   storageData: StoreDataType;
   openModal: () => void;
 };
-//TODO get rid of ustawienia dependecy
-const TopBar = ({title = 'Title', openModal}: TopBar) => {
+
+const TopBar = ({title = 'Title', openModal, settings}: TopBar) => {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>{title}</Text>
-      {title === 'Plan Lekcji' && <SettingsIcon openModal={openModal} />}
-      {title === 'Ustawienia' && <SettingsIcon openModal={openModal} />}
+      {settings && <SettingsIcon openModal={openModal} />}
     </View>
   );
 };

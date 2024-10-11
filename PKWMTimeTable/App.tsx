@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable curly */
 import React, {useEffect, useState} from 'react';
 import {
@@ -75,8 +76,8 @@ const Home = () => {
 
   const closeModal = (newFilterData: StoreDataType) => {
     setModalVisible(false);
-    setFilterData(newFilterData);
     storeData(newFilterData);
+    setFilterData(newFilterData);
   };
 
   const changeDay = (newDay: Day, newWeek: WeekType) => {
@@ -85,11 +86,10 @@ const Home = () => {
     storeDay(newDay, newWeek);
   };
 
-  const handleLayoutChange = () => {
-    const {height, width} = Dimensions.get('window');
-    // console.warn('Layout Changed | Landscape:', height < width);
-    setOrientationLandscape(height < width);
-  };
+  const handleLayoutChange = () =>
+    setOrientationLandscape(
+      Dimensions.get('window').height < Dimensions.get('window').width,
+    );
 
   return (
     <SafeAreaView style={backgroundStyle} onLayout={handleLayoutChange}>
@@ -98,9 +98,10 @@ const Home = () => {
         backgroundColor={backgroundStyle.backgroundColor}
       />
       <TopBar
-        title="Plan Lekcji"
+        title="Rozkład zajęć"
         storageData={filterData}
         openModal={() => setModalVisible(true)}
+        settings
       />
       <Modal
         animationType="fade"
