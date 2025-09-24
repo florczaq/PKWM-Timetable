@@ -1,4 +1,4 @@
-This is an old project. Newest version of app is available here: https://github.com/PKTTTeam/PKWMTT-frontend-mobile/releases/tag/v0.3.3
+This is an old project. Newest version of app is available here: https://github.com/PKWMApp/PKWMTT-frontend-mobile/
 
 ## Timetable for PKWM - Android
 1. Install apk: [APK](https://github.com/florczaq/PKWM-Timetable/tree/main/PKWMTimeTable/android/app/build/outputs/apk/release)
