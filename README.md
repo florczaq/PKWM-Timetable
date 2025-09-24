@@ -1,3 +1,5 @@
+This is an old project. Newest version of app is available here: https://github.com/PKTTTeam/PKWMTT-frontend-mobile/releases/tag/v0.3.3
+
 ## Timetable for PKWM - Android
 1. Install apk: [APK](https://github.com/florczaq/PKWM-Timetable/tree/main/PKWMTimeTable/android/app/build/outputs/apk/release)
 2. Find apk in your files and run it 
@@ -7,3 +9,5 @@ You are welcome 🫡
 
 ### Update 10-06-24
 Now on landscape mode app shows whole week at once 
+
+
